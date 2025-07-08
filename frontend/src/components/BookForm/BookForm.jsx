@@ -1,16 +1,24 @@
-import { use, useState } from "react";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addBook } from "../../redux/books/actionCreators";
 
 import "./BookForm.css"
 
 const BookForm = () => {
     const [title, setTitle] = useState("")
     const [autor, setAutor] = useState("")
+    const dispatch = useDispatch()
 
     const handleSubmit = (event) => {
         event.preventDefault()
 
         if (title && autor) {
-            // dispatch
+            const book = {
+                title: title,
+                autor: autor
+            }
+            
+            dispatch(addBook(book))
             
             setTitle("")
             setAutor("")

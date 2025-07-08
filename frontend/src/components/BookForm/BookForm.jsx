@@ -3,28 +3,42 @@ import { useDispatch } from "react-redux";
 // Внешняя библиотека для создания уникальных идентификаторов
 import { v4 as uuidv4 } from 'uuid';
 import { addBook } from "../../redux/books/actionCreators";
+import booksData from "../../data/books.json";
 
 import "./BookForm.css"
 
 const BookForm = () => {
     const [title, setTitle] = useState("")
-    const [autor, setAutor] = useState("")
+    const [author, setAuthor] = useState("")
     const dispatch = useDispatch()
+
+    const handleAddRandomBook = () => {
+        const randomIndex = Math.floor(Math.random() * booksData.length);
+        const randomBook = booksData[randomIndex];
+
+        const randomBookWithId = {
+            ...randomBook,
+            id: uuidv4()
+        }
+
+        dispatch(addBook(randomBookWithId))
+    }
+
 
     const handleSubmit = (event) => {
         event.preventDefault()
 
-        if (title && autor) {
+        if (title && author) {
             const book = {
                 title: title,
-                autor: autor,
+                author: author,
                 id: uuidv4()
             }
-            
+
             dispatch(addBook(book))
-            
+
             setTitle("")
-            setAutor("")
+            setAuthor("")
         }
     }
     return (
@@ -36,10 +50,11 @@ const BookForm = () => {
                     <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} />
                 </div>
                 <div>
-                    <label htmlFor="title">Autor: </label>
-                    <input type="text" id="autor" value={autor} onChange={(e) => setAutor(e.target.value)} />
+                    <label htmlFor="title">Author: </label>
+                    <input type="text" id="author" value={author} onChange={(e) => setAuthor(e.target.value)} />
                 </div>
                 <button type="submit">Add Book</button>
+                <button type="button" onClick={handleAddRandomBook}>Add Random</button>
             </form>
         </div>
     )

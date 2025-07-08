@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+// Внешняя библиотека для создания уникальных идентификаторов
+import { v4 as uuidv4 } from 'uuid';
 import { addBook } from "../../redux/books/actionCreators";
 
 import "./BookForm.css"
@@ -15,7 +17,8 @@ const BookForm = () => {
         if (title && autor) {
             const book = {
                 title: title,
-                autor: autor
+                autor: autor,
+                id: uuidv4()
             }
             
             dispatch(addBook(book))

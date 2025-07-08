@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-// Внешняя библиотека для создания уникальных идентификаторов
-import { v4 as uuidv4 } from 'uuid';
 import { addBook } from "../../redux/books/actionCreators";
+import createBookWithId from "../../utils/createBookWithId";
 import booksData from "../../data/books.json";
 
 import "./BookForm.css"
@@ -16,13 +15,7 @@ const BookForm = () => {
         const randomIndex = Math.floor(Math.random() * booksData.length);
         const randomBook = booksData[randomIndex];
 
-        const randomBookWithId = {
-            ...randomBook,
-            id: uuidv4(),
-            isFavorite: false
-        }
-
-        dispatch(addBook(randomBookWithId))
+        dispatch(addBook(createBookWithId(randomBook)))
     }
 
 
@@ -30,15 +23,7 @@ const BookForm = () => {
         event.preventDefault()
 
         if (title && author) {
-            const book = {
-                title: title,
-                author: author,
-                id: uuidv4(),
-                isFavorite: false
-            }
-
-            dispatch(addBook(book))
-
+            dispatch(addBook(createBookWithId({ title: title, author: author })))
             setTitle("")
             setAuthor("")
         }

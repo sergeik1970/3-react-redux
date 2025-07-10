@@ -1,5 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
-import { setTitleFilter, selectTitleFilter, setAuthorFilter, selectAuthorFilter, setOnlyFavoriteFilter, selectOnlyFavoriteFilter, resetFilters } from "../../redux/slices/filterSlice";
+import { 
+    setTitleFilter, 
+    selectTitleFilter, 
+    setAuthorFilter, 
+    selectAuthorFilter, 
+    setOnlyFavoriteFilter, 
+    selectOnlyFavoriteFilter, 
+    resetFilters 
+} from "../../redux/slices/filterSlice";
 
 import "./Filter.css";
 

@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
-import { deleteBook, toggleFavorite } from "../../redux/books/actionCreators"
+// import { deleteBook, toggleFavorite } from "../../redux/books/actionCreators"
+import { deleteBook, toggleFavorite, selectBooks } from "../../redux/slices/booksSlice";
 import { BsBookmarkStarFill, BsBookmarkStar } from "react-icons/bs";
 import { selectTitleFilter, selectAuthorFilter, selectOnlyFavoriteFilter } from "../../redux/slices/filterSlice";
 import "./BookList.css"
@@ -7,7 +8,8 @@ import "./BookList.css"
 
 const BookList = () => {
     // Подписываемся на состояние
-    const books = useSelector((state) => state.books);
+    // const books = useSelector((state) => state.books);
+    const books = useSelector(selectBooks);
 
     const titleFilter = useSelector(selectTitleFilter)
     const authorFilter = useSelector(selectAuthorFilter)

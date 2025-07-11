@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FaSpinner } from "react-icons/fa";
 // import { addBook } from "../../redux/books/actionCreators";
 // import { addBook, thunkFunction } from "../../redux/slices/booksSlice";
 import { setError } from "../../redux/slices/errorSlice";
-import { addBook, fetchBook } from "../../redux/slices/booksSlice";
+import { addBook, fetchBook, selectIsLoadingViaAPI } from "../../redux/slices/booksSlice";
 import createBookWithId from "../../utils/createBookWithId";
 import booksData from "../../data/books.json";
 
@@ -13,7 +13,7 @@ import "./BookForm.css"
 const BookForm = () => {
     const [title, setTitle] = useState("")
     const [author, setAuthor] = useState("")
-    const [isLoading, setIsLoading] = useState(false)
+    const isLoadingViaAPI = useSelector(selectIsLoadingViaAPI)
     const dispatch = useDispatch()
 
     const handleAddRandomBook = () => {
@@ -36,16 +36,11 @@ const BookForm = () => {
         }
     };
 
-    const handleAddRandomBookViaAPI = async () => {
+    const handleAddRandomBookViaAPI = () => {
         // dispatch(thunkFunction)    
-        try {
-            setIsLoading(true)
-            await dispatch(fetchBook("http://localhost:4000/random-book"))
-            // Чтобы создать задержку
-            // await dispatch(fetchBook("http://localhost:4000/random-book-delayed"))
-        } finally {
-            setIsLoading(false)
-        }
+        dispatch(fetchBook("http://localhost:4000/random-book"))
+        // Чтобы создать задержку
+        dispatch(fetchBook("http://localhost:4000/random-book-delayed"))
 
     }
 
@@ -64,8 +59,8 @@ const BookForm = () => {
                 <button type="submit">Add Book</button>
                 <button type="button" onClick={handleAddRandomBook}>Add Random</button>
 
-                <button type="button" onClick={handleAddRandomBookViaAPI} disabled={isLoading}>
-                    {isLoading ? (
+                <button type="button" onClick={handleAddRandomBookViaAPI} disabled={isLoadingViaAPI}>
+                    {isLoadingViaAPI ? (
                         <>
                             <span>Loading Book...</span>
                             <FaSpinner className="spinner" />

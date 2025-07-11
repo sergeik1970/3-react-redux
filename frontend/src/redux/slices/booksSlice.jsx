@@ -4,7 +4,10 @@ import axios from "axios";
 import createBookWithId from "../../utils/createBookWithId";
 import { setError } from "./errorSlice";
 
-const initialState = []
+const initialState = {
+    books: [],
+    isLoadingViaAPI: false
+}
 
 export const fetchBook = createAsyncThunk(
     "books/fetchBook",
@@ -14,7 +17,10 @@ export const fetchBook = createAsyncThunk(
             return res.data;
         } catch (error) {
             thunkAPI.dispatch(setError(error.message))
-            throw error
+            // или
+            // throw error;
+            // или
+            return thunkAPI.rejectWithValue(error)
         }
 
     })
@@ -24,7 +30,7 @@ const booksSlice = createSlice({
     initialState: initialState,
     reducers: {
         addBook: (state, action) => {
-            state.push(action.payload)
+            state.books.push(action.payload)
         },
         deleteBook: (state, action) => {
             // или так
@@ -33,11 +39,14 @@ const booksSlice = createSlice({
             //     state.splice(index, 1);
             // }
             // или так
-            return state.filter((book) => book.id !== action.payload)
+            return {
+                ...state,
+                books: state.books.filter((book) => book.id !== action.payload)
+            }
         },
         toggleFavorite: (state, action) => {
             // или так
-            state.forEach((book) => {
+            state.books.forEach((book) => {
                 if (book.id == action.payload) {
                     book.isFavorite = !book.isFavorite
                 }
@@ -50,24 +59,47 @@ const booksSlice = createSlice({
             // )
         }
     },
-    extraReducers: (builder) => {
-        builder.addCase(fetchBook.fulfilled, (state, action) => {
-            if (action.payload.title && action.payload.author) {
-                state.push(createBookWithId(action.payload, "API"))
-            }
-        });
-    }
+
+    // extraReducers: (builder) => {
+    //     builder.addCase(fetchBook.fulfilled, (state, action) => {
+    //         if (action.payload.title && action.payload.author) {
+    //             state.books.push(createBookWithId(action.payload, "API"))
+    //         }
+    //     });
+    // }
+
     // не работает
     // extraReducers: {
+    //     [fetchBook.pending]: (state, action) => {
+    //         state.isLoadingViaAPI = true
+    //     },
     //     [fetchBook.fulfilled]: (state, action) => {
+    //         state.isLoadingViaAPI = false
     //         if (action.payload.title && action.payload.author) {
-    //             state.push(createBookWithId(action.payload, "API"))
+    //             state.books.push(createBookWithId(action.payload, "API"))
     //         }
+    //     },
+    //     [fetchBook.rejected]: (state, action) => {
+    //         state.isLoadingViaAPI = false
+
     //     }
     // }
+     extraReducers: (builder) => {
+        builder
+            .addCase(fetchBook.pending, (state, action) => {
+                state.isLoadingViaAPI = true;
+            })
+            .addCase(fetchBook.fulfilled, (state, action) => {
+                state.isLoadingViaAPI = false;
+                if (action.payload.title && action.payload.author) {
+                    state.books.push(createBookWithId(action.payload, "API"));
+                }
+            })
+            .addCase(fetchBook.rejected, (state, action) => {
+                state.isLoadingViaAPI = false;
+            });
+    }
 });
-
-export const { addBook, deleteBook, toggleFavorite } = booksSlice.actions
 
 // export const thunkFunction = async (dispatch, getState) => {
 //     try {
@@ -82,6 +114,9 @@ export const { addBook, deleteBook, toggleFavorite } = booksSlice.actions
 //     }
 // }
 
-export const selectBooks = (state) => state.books
+export const { addBook, deleteBook, toggleFavorite } = booksSlice.actions
+
+export const selectBooks = (state) => state.books.books
+export const selectIsLoadingViaAPI = (state) => state.books.isLoadingViaAPI
 
 export default booksSlice.reducer;
